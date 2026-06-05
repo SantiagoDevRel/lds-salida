@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Los Del Sur — Linterna (Android)</title>
+  <meta name="description" content="Bajá la linterna verde y blanca de Los Del Sur para Android." />
+  <style>
+    @font-face { font-family:"LdsDisplay"; src:url("archivo-black.woff2") format("woff2"); }
+    :root { --verde:#00C247; }
+    *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+    body{
+      background:
+        radial-gradient(circle at 50% 26%, rgba(0,177,64,0.22) 0%, transparent 55%),
+        linear-gradient(180deg,#061008 0%, #020503 60%, #000 100%);
+      color:#fff;min-height:100vh;
+      font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+      display:flex;flex-direction:column;align-items:center;
+      padding:40px 22px 60px;text-align:center;gap:18px;
+    }
+    .escudo{width:150px;height:150px;object-fit:contain;margin-top:8px;
+      filter:drop-shadow(0 8px 30px rgba(0,177,64,0.5));}
+    .eyebrow{font-family:"LdsDisplay",sans-serif;font-size:12px;letter-spacing:4px;
+      text-transform:uppercase;color:rgba(255,255,255,0.55)}
+    h1{font-family:"LdsDisplay",sans-serif;font-size:clamp(38px,12vw,60px);
+      text-transform:uppercase;color:var(--verde);line-height:0.92;letter-spacing:-1px}
+    .sub{font-size:14px;color:#bbb;max-width:340px;line-height:1.5}
+    .btn{display:inline-flex;align-items:center;justify-content:center;gap:10px;
+      width:100%;max-width:360px;margin-top:14px;padding:20px;border-radius:18px;
+      background:var(--verde);color:#062b13;font-family:"LdsDisplay",sans-serif;
+      font-size:21px;letter-spacing:1px;text-transform:uppercase;text-decoration:none;
+      box-shadow:0 0 44px rgba(0,177,64,0.45);transition:transform .1s ease}
+    .btn:active{transform:scale(0.97)}
+    .steps{max-width:360px;width:100%;text-align:left;margin-top:18px;
+      background:#0d0d0d;border:1px solid #1d1d1d;border-radius:16px;padding:18px 20px}
+    .steps h2{font-size:12px;letter-spacing:2px;text-transform:uppercase;color:var(--verde);margin-bottom:12px}
+    .steps ol{margin:0;padding-left:20px}
+    .steps li{font-size:14px;color:#cfcfcf;margin-bottom:9px;line-height:1.45}
+    .note{font-size:12px;color:#777;max-width:340px;line-height:1.5;margin-top:10px}
+    .ios{font-size:13px;color:#888;margin-top:6px}
+    .ios a{color:var(--verde)}
+  </style>
+</head>
+<body>
+  <img class="escudo" src="escudo.png" alt="Escudo Los Del Sur" />
+  <div class="eyebrow">Desde 1997 · Linterna</div>
+  <h1>Los Del Sur</h1>
+  <p class="sub">La linterna verde y blanca para la salida en tribuna. 100% offline. Android 7 o superior.</p>
+
+  <a class="btn" href="https://github.com/SantiagoDevRel/lds-salida/releases/download/v1.0/los-del-sur.apk" download>
+    ⬇ Bajar para Android
+  </a>
+
+  <div class="steps">
+    <h2>Cómo instalar</h2>
+    <ol>
+      <li>Tocá <b>“Bajar para Android”</b> y esperá a que descargue.</li>
+      <li>Abrí el archivo <b>los-del-sur.apk</b> (en Descargas o en la notificación).</li>
+      <li>Si Android avisa, tocá <b>“Ajustes”</b> y activá <b>“Permitir de esta fuente”</b> (instalar apps desconocidas). Es normal: la app no está en la tienda todavía.</li>
+      <li>Volvé y tocá <b>Instalar</b>. ¡Listo, vamos todos juntos! 🟢⚪</li>
+    </ol>
+  </div>
+
+  <p class="note">Es seguro: es la app oficial de la barra, sin datos ni internet. La versión de Google Play (tienda oficial) llega pronto.</p>
+  <p class="ios">¿iPhone? <a href="#">Próximamente en la App Store</a></p>
+</body>
+</html>
