@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <title>Los Del Sur — Linterna</title>
   <meta name="description" content="La linterna verde y blanca de Los Del Sur — Android, iPhone o navegador." />
   <style>
@@ -13,12 +13,22 @@
       background:
         radial-gradient(circle at 50% 24%, rgba(0,177,64,0.22) 0%, transparent 55%),
         linear-gradient(180deg,#061008 0%, #020503 60%, #000 100%);
-      color:#fff;min-height:100vh;
+      color:#fff;min-height:100dvh;
       font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
       display:flex;flex-direction:column;align-items:center;
-      padding:40px 22px 56px;text-align:center;gap:16px;
+      padding:14px 22px 40px;text-align:center;gap:16px;
     }
-    .escudo{width:138px;height:138px;object-fit:contain;margin-top:6px;
+
+    /* toggle segmentado — ARRIBA DEL TODO, siempre visible */
+    .tabs{display:flex;gap:5px;background:#0d0d0d;border:1px solid #1d1d1d;
+      border-radius:14px;padding:5px;width:100%;max-width:380px;flex:0 0 auto}
+    .tab{flex:1;padding:11px 4px;border:0;border-radius:10px;background:transparent;
+      color:#bbb;font-family:inherit;font-size:14px;font-weight:600;cursor:pointer;
+      transition:background .15s, color .15s}
+    .tab.active{background:var(--verde);color:#062b13}
+
+    #lead{display:flex;flex-direction:column;align-items:center;gap:14px;margin-top:8px}
+    .escudo{width:130px;height:130px;object-fit:contain;
       filter:drop-shadow(0 8px 30px rgba(0,177,64,0.5));}
     .eyebrow{font-family:"LdsDisplay",sans-serif;font-size:12px;letter-spacing:4px;
       text-transform:uppercase;color:rgba(255,255,255,0.55)}
@@ -26,16 +36,8 @@
       text-transform:uppercase;color:#fff;line-height:1;letter-spacing:4px}
     .sub{font-size:14px;color:#bbb;max-width:340px;line-height:1.5}
 
-    /* toggle segmentado */
-    .tabs{display:flex;gap:5px;background:#0d0d0d;border:1px solid #1d1d1d;
-      border-radius:14px;padding:5px;width:100%;max-width:360px;margin-top:6px}
-    .tab{flex:1;padding:11px 4px;border:0;border-radius:10px;background:transparent;
-      color:#bbb;font-family:inherit;font-size:14px;font-weight:600;cursor:pointer;
-      transition:background .15s, color .15s}
-    .tab.active{background:var(--verde);color:#062b13}
-
     .panel{width:100%;max-width:360px;display:flex;flex-direction:column;
-      align-items:center;gap:16px;margin-top:2px}
+      align-items:center;gap:16px}
     .panel[hidden]{display:none}
 
     .btn{display:inline-flex;align-items:center;justify-content:center;gap:10px;
@@ -53,18 +55,29 @@
     .simple b{color:#fff}
     .sub2{font-size:13px;color:#aaa;line-height:1.55;max-width:320px}
     .big-note{font-size:17px;color:#fff;font-weight:600;margin-top:4px}
+
+    /* iframe con la app idéntica */
+    .appframe-wrap{max-width:none;width:100%;flex:1 1 auto;min-height:0}
+    .appframe-wrap iframe{width:100%;height:100%;border:0;display:block;border-radius:14px}
+
+    /* MODO NAVEGADOR: solo toggle arriba + app llenando el resto, sin scroll */
+    body.web{height:100dvh;overflow:hidden;padding:10px 10px 10px;gap:10px}
+    body.web #lead{display:none}
+    body.web .appframe-wrap iframe{border-radius:14px}
   </style>
 </head>
 <body>
-  <img class="escudo" src="escudo.png" alt="Escudo Los Del Sur" />
-  <div class="eyebrow">Desde 1997</div>
-  <h1>Siempre Presentes</h1>
-  <p class="sub">La linterna verde y blanca para la salida en el segundo tiempo de la final vs Junior.</p>
-
   <div class="tabs" role="tablist">
     <button class="tab" data-tab="android">Android</button>
     <button class="tab" data-tab="iphone">iPhone</button>
     <button class="tab" data-tab="web">Navegador</button>
+  </div>
+
+  <div id="lead">
+    <img class="escudo" src="escudo.png" alt="Escudo Los Del Sur" />
+    <div class="eyebrow">Desde 1997</div>
+    <h1>Siempre Presentes</h1>
+    <p class="sub">La linterna verde y blanca para la salida en el segundo tiempo de la final vs Junior.</p>
   </div>
 
   <!-- ANDROID -->
@@ -79,14 +92,12 @@
   <!-- IPHONE -->
   <div class="panel" data-panel="iphone" hidden>
     <p class="big-note">📱 Próximamente en la App Store.</p>
-    <p class="sub2">Estamos en revisión de Apple. Mientras tanto, usala ya mismo en el navegador 👇</p>
-    <a class="btn ghost" href="/app/">▶ Abrir en el navegador</a>
+    <p class="sub2">Estamos en revisión de Apple. Mientras tanto, usala ya mismo desde la pestaña <b>Navegador</b> 👆</p>
   </div>
 
-  <!-- NAVEGADOR -->
-  <div class="panel" data-panel="web" hidden>
-    <a class="btn" href="/app/">▶ Abrir la linterna</a>
-    <p class="sub2">Sin instalar nada. Funciona en cualquier celular desde el navegador — abrila y ponela en pantalla completa.</p>
+  <!-- NAVEGADOR: la app idéntica, embebida -->
+  <div class="panel appframe-wrap" data-panel="web" hidden>
+    <iframe data-src="/app/" title="Linterna Los Del Sur" allow="fullscreen" allowfullscreen></iframe>
   </div>
 
   <script>
@@ -95,9 +106,13 @@
     function show(name){
       tabs.forEach(function(t){ t.classList.toggle('active', t.dataset.tab === name); });
       panels.forEach(function(p){ p.hidden = (p.dataset.panel !== name); });
+      document.body.classList.toggle('web', name === 'web');
+      if (name === 'web'){
+        var f = document.querySelector('.appframe-wrap iframe');
+        if (f && !f.src) { f.src = f.dataset.src; }   // carga la app solo al entrar (ahorra datos)
+      }
     }
     tabs.forEach(function(t){ t.addEventListener('click', function(){ show(t.dataset.tab); }); });
-    // arranca en la pestaña del dispositivo
     var ua = navigator.userAgent || '';
     show(/iPhone|iPad|iPod/i.test(ua) ? 'iphone' : 'android');
   </script>
