@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover"
+  />
+  <meta name="theme-color" content="#000000" />
+  <title>Los Del Sur</title>
+
+  <style>
+    /* Archivo Black: grotesque negro/rectangular tipo trapo de la barra
+       (gordita y blocky), embebida offline (OFL). */
+    @font-face {
+      font-family: "LdsDisplay";
+      src: url("archivo-black.woff2") format("woff2");
+      font-weight: 400;
+      font-display: swap;
+    }
+
+    :root {
+      --verde: #00B140;        /* verde Atlético Nacional vibrante */
+      --verde-escudo: #0b9444; /* verde ORIGINAL del escudo (bandas del trapo) */
+      --verde-prof: #0a7d3e;
+      --negro: #000000;
+      --display: "LdsDisplay", system-ui, -apple-system, "Segoe UI", sans-serif;
+    }
+
+    * {
+      margin: 0; padding: 0; box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    html, body {
+      height: 100%; width: 100%;
+      overflow: hidden;
+      background: var(--negro);
+      color: #fff;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      -webkit-user-select: none; user-select: none;
+      overscroll-behavior: none;
+      touch-action: manipulation;
+    }
+
+    /* ===================== Fondo: video ambient de la barra ===================== */
+    #bg {
+      position: fixed; inset: 0; z-index: 0; overflow: hidden;
+      background:
+        radial-gradient(ellipse at 50% 55%, rgba(10,125,62,0.18) 0%, transparent 55%),
+        linear-gradient(180deg, #020503 0%, #050a07 50%, #000 100%);
+      transition: opacity 0.25s ease;
+    }
+    #bg .poster, #bg video {
+      position: absolute; top: -10%; left: 0; right: 0;
+      height: 120%; width: 100%;
+      object-fit: cover; transform: scale(1.04);
+      filter: saturate(1.15) contrast(1.1);
+    }
+    #bg .poster {
+      background: center / cover no-repeat url("barra-bg-poster.jpg");
+      opacity: 0.32; transition: opacity 1.2s ease;
+    }
+    #bg video { opacity: 0; transition: opacity 1s ease; }
+    #bg video.playing { opacity: 0.4; }
+    #bg .poster.hidden { opacity: 0; }
+    #bg .overlay {
+      position: absolute; inset: 0;
+      background:
+        radial-gradient(ellipse at 50% 55%, rgba(10,125,62,0.10) 0%, transparent 55%),
+        linear-gradient(180deg, rgba(0,0,0,0.30) 0%, rgba(0,0,0,0.58) 60%, rgba(0,0,0,0.74) 100%);
+    }
+
+    /* ===================== Splash / Inicio ===================== */
+    #home {
+      position: fixed; inset: 0; z-index: 10;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: space-between;
+      padding: calc(env(safe-area-inset-top, 0px) + 34px) 24px
+               calc(env(safe-area-inset-bottom, 0px) + 30px);
+      transition: opacity 0.25s ease;
+    }
+
+    .brand {
+      display: flex; flex-direction: column; align-items: center;
+      gap: 12px; margin-top: 6vh;
+    }
+
+    /* Escudo clickeable (golpe de bombo + trapo) */
+    .escudo-btn {
+      position: relative; display: grid; place-items: center;
+      width: 96px; height: 96px;
+      border: none; background: transparent; cursor: pointer;
+      overflow: visible;
+    }
+    .escudo-btn img {
+      position: relative; z-index: 10;
+      width: 96px; height: 96px; object-fit: contain;
+      filter: drop-shadow(0 6px 26px rgba(0, 177, 64, 0.45));
+    }
+    .escudo-btn img.hit { animation: escudo-hit 520ms cubic-bezier(0.34, 1.56, 0.5, 1) both; }
+    @keyframes escudo-hit {
+      0% { transform: scale(1); } 20% { transform: scale(1.18); }
+      44% { transform: scale(0.95); } 70% { transform: scale(1.04); }
+      100% { transform: scale(1); }
+    }
+    .hit-fx { position: absolute; inset: 0; z-index: 0; pointer-events: none; }
+    .hitflash {
+      position: absolute; left: 50%; top: 50%;
+      width: 130px; height: 130px; border-radius: 50%;
+      background: radial-gradient(circle, rgba(43,255,127,0.45) 0%, rgba(43,255,127,0.12) 40%, transparent 68%);
+      pointer-events: none;
+      animation: hitflash 760ms ease-out forwards;
+    }
+    @keyframes hitflash {
+      0% { opacity: 0; transform: translate(-50%, -50%) scale(0.5); }
+      22% { opacity: 0.6; }
+      100% { opacity: 0; transform: translate(-50%, -50%) scale(1.9); }
+    }
+    .smokepuff {
+      position: absolute; left: 50%; top: 50%;
+      width: 56px; height: 56px; margin: -28px 0 0 -28px; border-radius: 50%;
+      background: radial-gradient(circle, rgba(43,255,127,0.5) 0%, rgba(43,255,127,0.16) 45%, transparent 70%);
+      transform-origin: center; pointer-events: none;
+      animation: smokepuff 920ms ease-out forwards;
+    }
+    @keyframes smokepuff {
+      0% { opacity: 0; transform: rotate(var(--a)) translateY(-4px) scale(0.35); }
+      18% { opacity: 0.55; }
+      100% { opacity: 0; transform: rotate(var(--a)) translateY(-62px) scale(1.65); }
+    }
+
+    .eyebrow {
+      font-size: 11px; font-weight: 800; letter-spacing: 4px;
+      text-transform: uppercase; color: rgba(255, 255, 255, 0.62);
+    }
+
+    /* Wordmark en UNA línea + clon "trapo" superpuesto */
+    .wordmark-wrap { position: relative; display: inline-block; }
+    .wordmark {
+      font-family: var(--display);
+      font-weight: 400; /* Archivo Black: peso único (black); fija h1 y span igual */
+      font-size: clamp(36px, 13.3vw, 66px); /* Archivo Black es ancha → 1 línea, con presencia */
+      line-height: 0.95; letter-spacing: -0.02em;
+      text-transform: uppercase; white-space: nowrap; text-align: center;
+      color: var(--verde);
+      text-shadow: 0 2px 18px rgba(0, 177, 64, 0.28);
+    }
+    /* MISMO glifo que el neón (hereda font-family/size/line-height/letter-spacing
+       de .wordmark). SOLO cambia el relleno: bandas verde/blanco/verde. Nada de
+       text-stroke ni nada que altere tamaño/grosor/posición — el swap es idéntico
+       letra por letra, solo el color. */
+    .wordmark.trapo {
+      position: absolute; inset: 0;
+      color: transparent; text-shadow: none;
+      background-image: linear-gradient(
+        to bottom,
+        var(--verde-escudo) 0%, var(--verde-escudo) 35%,
+        #fff 35%, #fff 65%,
+        var(--verde-escudo) 65%, var(--verde-escudo) 100%
+      );
+      -webkit-background-clip: text; background-clip: text;
+      -webkit-text-fill-color: transparent;
+      /* Sin trazo: el blanco/verde llegan al borde de la letra directo, limpio.
+         Mismo glifo que el neón → solo cambia el color (verde/blanco/verde). */
+      opacity: 0; pointer-events: none;
+    }
+    /* Swap LIMPIO: mientras corre el trapo, el neón se oculta del todo (sin
+       mezcla / sin neón asomando atrás). El trapo hace un wipe de bandera
+       (verde/blanco/verde + borde negro) y al terminar se corta de vuelta a
+       neón en un frame. opacity constante = nunca se ven los dos juntos. */
+    .wordmark-wrap.swapping #wordmark { opacity: 0; }
+    .wordmark.trapo.flag {
+      opacity: 1;
+      animation: trapo-flag 1200ms cubic-bezier(0.32, 0.72, 0, 1) forwards;
+    }
+    /* Intro (al abrir la app): wipe-in + HOLD más largo antes de cortar a neón. */
+    .wordmark.trapo.flag.intro {
+      animation: trapo-flag-intro 2900ms cubic-bezier(0.32, 0.72, 0, 1) forwards;
+    }
+    @keyframes trapo-flag {
+      0%   { clip-path: inset(0 100% 0 0); }  /* oculto */
+      35%  { clip-path: inset(0 0 0 0); }     /* wipe in L→R */
+      100% { clip-path: inset(0 0 0 0); }     /* hold (corte a neón vía JS) */
+    }
+    @keyframes trapo-flag-intro {
+      0%   { clip-path: inset(0 100% 0 0); }  /* oculto */
+      18%  { clip-path: inset(0 0 0 0); }     /* wipe in L→R */
+      100% { clip-path: inset(0 0 0 0); }     /* HOLD largo (corte a neón vía JS) */
+    }
+
+    .lema {
+      font-size: 13px; font-weight: 700; letter-spacing: 3px;
+      text-transform: uppercase; color: var(--verde);
+      text-align: center; opacity: 0.85;
+    }
+
+    /* ===================== Controles ===================== */
+    .controls {
+      width: 100%; max-width: 420px;
+      display: flex; flex-direction: column; gap: 18px; align-items: center;
+    }
+    .speed-label {
+      font-size: 11px; letter-spacing: 3px; text-transform: uppercase;
+      color: rgba(255, 255, 255, 0.5); font-weight: 800;
+    }
+    .speeds { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; width: 100%; }
+    .speed-btn {
+      padding: 13px 0;
+      border: 2px solid rgba(255, 255, 255, 0.16); border-radius: 14px;
+      background: rgba(0, 0, 0, 0.35); color: #fff;
+      font-family: var(--display); font-size: 17px; letter-spacing: 0.5px;
+      text-transform: uppercase; cursor: pointer; transition: all 0.18s ease;
+    }
+    .speed-btn.active {
+      border-color: var(--verde); background: rgba(0, 177, 64, 0.14);
+      color: var(--verde); box-shadow: 0 0 22px rgba(0, 177, 64, 0.35);
+    }
+
+    .power {
+      width: 100%; padding: 20px 0; border: none; border-radius: 20px;
+      background: var(--verde); color: #062b13;
+      font-family: var(--display); font-size: 26px; letter-spacing: 2px;
+      text-transform: uppercase; cursor: pointer;
+      box-shadow: 0 0 44px rgba(0, 177, 64, 0.45);
+      transition: transform 0.1s ease;
+    }
+    .power:active { transform: scale(0.97); }
+
+    .aviso {
+      font-size: 10.5px; line-height: 1.45;
+      color: rgba(255, 255, 255, 0.42); text-align: center; max-width: 330px;
+    }
+
+    /* ===================== Linterna (encendido) ===================== */
+    #flash {
+      position: fixed; inset: 0; display: none;
+      align-items: flex-end; justify-content: center;
+      padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 30px);
+      background: var(--verde); z-index: 100;
+    }
+    #flash.on { display: flex; }
+    #flash.blanco { background: #ffffff; }
+    .hint {
+      pointer-events: none;
+      font-size: 12px; font-weight: 800; letter-spacing: 1.5px;
+      text-transform: uppercase; color: rgba(255, 255, 255, 0.92);
+      background: rgba(0, 0, 0, 0.7); padding: 9px 18px; border-radius: 999px;
+      animation: fade 3s ease forwards;
+    }
+    @keyframes fade { 0%,70% { opacity: 1; } 100% { opacity: 0; } }
+
+    @media (prefers-reduced-motion: reduce) {
+      .hint, .escudo-btn img.hit, .hitflash, .smokepuff,
+      .wordmark.trapo.flag { animation: none !important; }
+      .wordmark.trapo { opacity: 0 !important; }
+    }
+  </style>
+</head>
+<body>
+  <!-- Fondo: video ambient de la barra (offline) -->
+  <div id="bg" aria-hidden="true">
+    <div class="poster" id="poster"></div>
+    <video id="bgVideo" autoplay muted loop playsinline preload="auto" poster="barra-bg-poster.jpg">
+      <source src="barra-bg.mp4" type="video/mp4" />
+      <source src="barra-bg.webm" type="video/webm" />
+    </video>
+    <div class="overlay"></div>
+  </div>
+
+  <!-- Splash / Inicio -->
+  <main id="home">
+    <div class="brand">
+      <button class="escudo-btn" id="escudoBtn" aria-label="Los Del Sur — tocá el escudo">
+        <span class="hit-fx" id="hitFx"></span>
+        <img src="escudo.png" id="escudo" alt="Escudo Los Del Sur" />
+      </button>
+      <div class="eyebrow">Desde 1997</div>
+      <div class="wordmark-wrap">
+        <h1 class="wordmark" id="wordmark">Los Del Sur</h1>
+        <span class="wordmark trapo" id="trapo" aria-hidden="true">Los Del Sur</span>
+      </div>
+      <div class="lema">Siempre presentes</div>
+    </div>
+
+    <div class="controls">
+      <div class="speed-label">Velocidad</div>
+      <div class="speeds">
+        <button class="speed-btn" data-ms="600">Lento</button>
+        <button class="speed-btn active" data-ms="280">Medio</button>
+        <button class="speed-btn" data-ms="150">Rápido</button>
+      </div>
+      <button class="power" id="powerBtn">Encender</button>
+      <p class="aviso">
+        Luz intermitente verde y blanca para la salida en tribuna. Si sos
+        sensible a destellos (epilepsia fotosensible), usá el modo Lento o
+        evitá el uso. La pantalla queda encendida mientras dure.
+      </p>
+    </div>
+  </main>
+
+  <!-- Linterna a pantalla completa -->
+  <div id="flash">
+    <span class="hint">Tocá para apagar</span>
+  </div>
+
+  <script>
+    (function () {
+      "use strict";
+
+      var home = document.getElementById("home");
+      var bg = document.getElementById("bg");
+      var flash = document.getElementById("flash");
+      var powerBtn = document.getElementById("powerBtn");
+      var bgVideo = document.getElementById("bgVideo");
+      var poster = document.getElementById("poster");
+      var escudoBtn = document.getElementById("escudoBtn");
+      var escudo = document.getElementById("escudo");
+      var hitFx = document.getElementById("hitFx");
+      var trapo = document.getElementById("trapo");
+      var speedBtns = Array.prototype.slice.call(document.querySelectorAll(".speed-btn"));
+
+      var intervalMs = 280;
+      var timer = null;
+      var blanco = false;
+      var wakeLock = null;
+      var fxLock = false;
+      var reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+      var KeepAwake =
+        window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.KeepAwake;
+
+      function haptic(ms) {
+        if (reduced) return;
+        try { if (navigator.vibrate) navigator.vibrate(ms || 12); } catch (e) {}
+      }
+
+      // ---------- Golpe de bombo + trapo (easter egg del escudo) ----------
+      // 9 bocanadas de humo repartidas en 360° (ángulos i*40+12), como la app.
+      function spawnFx() {
+        hitFx.innerHTML = "";
+        var flashEl = document.createElement("span");
+        flashEl.className = "hitflash";
+        hitFx.appendChild(flashEl);
+        for (var i = 0; i < 9; i++) {
+          var puff = document.createElement("span");
+          puff.className = "smokepuff";
+          puff.style.setProperty("--a", (i * 40 + 12) + "deg");
+          hitFx.appendChild(puff);
+        }
+        window.setTimeout(function () { hitFx.innerHTML = ""; }, 980);
+      }
+
+      function pulseHit() {
+        escudo.classList.remove("hit");
+        // reflow para reiniciar la animación si ya estaba activa
+        void escudo.offsetWidth;
+        escudo.classList.add("hit");
+        if (!reduced) spawnFx();
+        window.setTimeout(function () { escudo.classList.remove("hit"); }, 560);
+      }
+
+      var wrap = trapo.parentElement;
+      function fireTrapo(intro) {
+        if (reduced) return;
+        wrap.classList.add("swapping");          // ocultar el neón al instante
+        trapo.classList.remove("flag", "intro");
+        void trapo.offsetWidth;                  // reflow → reinicia la animación
+        if (intro) trapo.classList.add("intro"); // intro = hold más largo
+        trapo.classList.add("flag");             // wipe-in + hold
+      }
+      // Al terminar el wipe: corte instantáneo de vuelta a neón (sin mezcla).
+      trapo.addEventListener("animationend", function () {
+        trapo.classList.remove("flag", "intro");
+        wrap.classList.remove("swapping");
+      });
+
+      function easterEgg() {
+        if (fxLock) return;
+        fxLock = true;
+        haptic(22);
+        pulseHit();
+        fireTrapo();
+        window.setTimeout(function () { fxLock = false; }, 1300);
+      }
+      escudoBtn.addEventListener("click", easterEgg);
+
+      // Intro de marca en la 1ra carga: golpe de bombo + trapo largo → neón.
+      if (!reduced) {
+        window.setTimeout(function () { pulseHit(); fireTrapo(true); }, 250);
+      }
+
+      // ---------- Fondo: reintentar autoplay si el browser lo bloquea ----------
+      function markPlaying() { bgVideo.classList.add("playing"); poster.classList.add("hidden"); }
+      function tryPlayBg() {
+        var p = bgVideo.play();
+        if (p && typeof p.then === "function") {
+          p.then(markPlaying).catch(function () {
+            var onGesture = function () {
+              bgVideo.play().then(markPlaying).catch(function () {});
+              window.removeEventListener("pointerdown", onGesture);
+            };
+            window.addEventListener("pointerdown", onGesture, { once: true });
+          });
+        } else { markPlaying(); }
+      }
+      bgVideo.addEventListener("playing", markPlaying);
+      bgVideo.addEventListener("loadeddata", tryPlayBg);
+      tryPlayBg();
+      document.addEventListener("visibilitychange", function () {
+        if (document.visibilityState === "visible" && !timer) tryPlayBg();
+      });
+
+      // ---------- Mantener pantalla encendida ----------
+      async function keepAwakeOn() {
+        try { if (KeepAwake && KeepAwake.keepAwake) { await KeepAwake.keepAwake(); return; } } catch (e) {}
+        try { if ("wakeLock" in navigator) { wakeLock = await navigator.wakeLock.request("screen"); } } catch (e) {}
+      }
+      async function keepAwakeOff() {
+        try { if (KeepAwake && KeepAwake.allowSleep) await KeepAwake.allowSleep(); } catch (e) {}
+        try { if (wakeLock) { await wakeLock.release(); wakeLock = null; } } catch (e) {}
+      }
+      document.addEventListener("visibilitychange", function () {
+        if (document.visibilityState === "visible" && timer) keepAwakeOn();
+      });
+
+      // ---------- Selección de velocidad ----------
+      speedBtns.forEach(function (btn) {
+        btn.addEventListener("click", function () {
+          speedBtns.forEach(function (b) { b.classList.remove("active"); });
+          btn.classList.add("active");
+          intervalMs = parseInt(btn.getAttribute("data-ms"), 10);
+          haptic(12);
+          if (timer) start();
+        });
+      });
+
+      // ---------- Encender / apagar ----------
+      function tick() { blanco = !blanco; flash.classList.toggle("blanco", blanco); }
+      function start() {
+        if (timer) clearInterval(timer);
+        blanco = false;
+        flash.classList.remove("blanco");
+        flash.classList.add("on");
+        home.style.opacity = "0"; home.style.pointerEvents = "none";
+        bg.style.opacity = "0";
+        // Fullscreen SOLO en web/PWA. En la app nativa (Capacitor) ya es pantalla
+        // completa, y requestFullscreen dispara el cartel feo de iOS
+        // ("capacitor://localhost is in full screen. Swipe down to exit").
+        var isNative = !!(window.Capacitor && window.Capacitor.isNativePlatform && window.Capacitor.isNativePlatform());
+        if (!isNative) {
+          try {
+            var el = document.documentElement;
+            (el.requestFullscreen || el.webkitRequestFullscreen) &&
+              (el.requestFullscreen ? el.requestFullscreen() : el.webkitRequestFullscreen());
+          } catch (e) {}
+        }
+        timer = setInterval(tick, intervalMs);
+        keepAwakeOn();
+      }
+      function stop() {
+        if (timer) clearInterval(timer);
+        timer = null;
+        flash.classList.remove("on", "blanco");
+        home.style.opacity = "1"; home.style.pointerEvents = "auto";
+        bg.style.opacity = "1";
+        try { if (document.fullscreenElement) document.exitFullscreen(); } catch (e) {}
+        keepAwakeOff();
+        tryPlayBg();
+      }
+
+      powerBtn.addEventListener("click", function () { haptic(18); start(); });
+      flash.addEventListener("click", function () { haptic(12); stop(); });
+    })();
+  </script>
+</body>
+</html>

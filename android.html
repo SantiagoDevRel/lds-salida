@@ -3,44 +3,56 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Los Del Sur — Linterna (Android)</title>
-  <meta name="description" content="Bajá la linterna verde y blanca de Los Del Sur para Android." />
+  <title>Los Del Sur — Linterna</title>
+  <meta name="description" content="La linterna verde y blanca de Los Del Sur — Android, iPhone o navegador." />
   <style>
     @font-face { font-family:"LdsDisplay"; src:url("archivo-black.woff2") format("woff2"); }
     :root { --verde:#00C247; }
     *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
     body{
       background:
-        radial-gradient(circle at 50% 26%, rgba(0,177,64,0.22) 0%, transparent 55%),
+        radial-gradient(circle at 50% 24%, rgba(0,177,64,0.22) 0%, transparent 55%),
         linear-gradient(180deg,#061008 0%, #020503 60%, #000 100%);
       color:#fff;min-height:100vh;
       font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
       display:flex;flex-direction:column;align-items:center;
-      padding:40px 22px 60px;text-align:center;gap:18px;
+      padding:40px 22px 56px;text-align:center;gap:16px;
     }
-    .escudo{width:150px;height:150px;object-fit:contain;margin-top:8px;
+    .escudo{width:138px;height:138px;object-fit:contain;margin-top:6px;
       filter:drop-shadow(0 8px 30px rgba(0,177,64,0.5));}
     .eyebrow{font-family:"LdsDisplay",sans-serif;font-size:12px;letter-spacing:4px;
       text-transform:uppercase;color:rgba(255,255,255,0.55)}
     h1{font-family:"LdsDisplay",sans-serif;font-size:clamp(22px,6.5vw,32px);
       text-transform:uppercase;color:#fff;line-height:1;letter-spacing:4px}
     .sub{font-size:14px;color:#bbb;max-width:340px;line-height:1.5}
+
+    /* toggle segmentado */
+    .tabs{display:flex;gap:5px;background:#0d0d0d;border:1px solid #1d1d1d;
+      border-radius:14px;padding:5px;width:100%;max-width:360px;margin-top:6px}
+    .tab{flex:1;padding:11px 4px;border:0;border-radius:10px;background:transparent;
+      color:#bbb;font-family:inherit;font-size:14px;font-weight:600;cursor:pointer;
+      transition:background .15s, color .15s}
+    .tab.active{background:var(--verde);color:#062b13}
+
+    .panel{width:100%;max-width:360px;display:flex;flex-direction:column;
+      align-items:center;gap:16px;margin-top:2px}
+    .panel[hidden]{display:none}
+
     .btn{display:inline-flex;align-items:center;justify-content:center;gap:10px;
-      width:100%;max-width:360px;margin-top:14px;padding:20px;border-radius:18px;
-      background:var(--verde);color:#062b13;font-family:"LdsDisplay",sans-serif;
-      font-size:21px;letter-spacing:1px;text-transform:uppercase;text-decoration:none;
+      width:100%;padding:20px;border-radius:18px;background:var(--verde);color:#062b13;
+      font-family:"LdsDisplay",sans-serif;font-size:20px;letter-spacing:1px;
+      text-transform:uppercase;text-decoration:none;
       box-shadow:0 0 44px rgba(0,177,64,0.45);transition:transform .1s ease}
     .btn:active{transform:scale(0.97)}
-    .steps{max-width:360px;width:100%;text-align:left;margin-top:18px;
-      background:#0d0d0d;border:1px solid #1d1d1d;border-radius:16px;padding:18px 20px}
-    .steps h2{font-size:12px;letter-spacing:2px;text-transform:uppercase;color:var(--verde);margin-bottom:12px}
-    .steps ol{margin:0;padding-left:20px}
-    .steps li{font-size:14px;color:#cfcfcf;margin-bottom:9px;line-height:1.45}
-    .simple{font-size:15px;color:#dcdcdc;line-height:1.65}
+    .btn.ghost{background:transparent;border:2px solid var(--verde);color:var(--verde);box-shadow:none}
+
+    .steps{width:100%;text-align:left;background:#0d0d0d;border:1px solid #1d1d1d;
+      border-radius:16px;padding:16px 18px}
+    .steps h2{font-size:12px;letter-spacing:2px;text-transform:uppercase;color:var(--verde);margin-bottom:10px}
+    .simple{font-size:15px;color:#dcdcdc;line-height:1.6}
     .simple b{color:#fff}
-    .note{font-size:12px;color:#777;max-width:340px;line-height:1.5;margin-top:10px}
-    .ios{font-size:13px;color:#888;margin-top:6px}
-    .ios a{color:var(--verde)}
+    .sub2{font-size:13px;color:#aaa;line-height:1.55;max-width:320px}
+    .big-note{font-size:17px;color:#fff;font-weight:600;margin-top:4px}
   </style>
 </head>
 <body>
@@ -49,15 +61,45 @@
   <h1>Siempre Presentes</h1>
   <p class="sub">La linterna verde y blanca para la salida en el segundo tiempo de la final vs Junior.</p>
 
-  <a class="btn" href="https://github.com/SantiagoDevRel/lds-salida/releases/download/v1.0/los-del-sur.apk" download>
-    ⬇ Bajar para Android
-  </a>
-
-  <div class="steps">
-    <h2>Súper fácil</h2>
-    <p class="simple">Tocá <b>“Bajar”</b> y abrí el archivo descargado. Como todavía no está en Google Play, Android te va a pedir permiso para instalarla: tocá <b>“Instalar de todos modos”</b> y después <b>Instalar</b>. ¡Listo! 🟢⚪</p>
+  <div class="tabs" role="tablist">
+    <button class="tab" data-tab="android">Android</button>
+    <button class="tab" data-tab="iphone">iPhone</button>
+    <button class="tab" data-tab="web">Navegador</button>
   </div>
 
-  <p class="ios">¿iPhone? Próximamente en la App Store.</p>
+  <!-- ANDROID -->
+  <div class="panel" data-panel="android">
+    <a class="btn" href="https://github.com/SantiagoDevRel/lds-salida/releases/download/v1.0/los-del-sur.apk" download>⬇ Bajar para Android</a>
+    <div class="steps">
+      <h2>Súper fácil</h2>
+      <p class="simple">Tocá <b>“Bajar”</b> y abrí el archivo descargado. Como todavía no está en Google Play, Android te va a pedir permiso para instalarla: tocá <b>“Instalar de todos modos”</b> y después <b>Instalar</b>. ¡Listo! 🟢⚪</p>
+    </div>
+  </div>
+
+  <!-- IPHONE -->
+  <div class="panel" data-panel="iphone" hidden>
+    <p class="big-note">📱 Próximamente en la App Store.</p>
+    <p class="sub2">Estamos en revisión de Apple. Mientras tanto, usala ya mismo en el navegador 👇</p>
+    <a class="btn ghost" href="/app/">▶ Abrir en el navegador</a>
+  </div>
+
+  <!-- NAVEGADOR -->
+  <div class="panel" data-panel="web" hidden>
+    <a class="btn" href="/app/">▶ Abrir la linterna</a>
+    <p class="sub2">Sin instalar nada. Funciona en cualquier celular desde el navegador — abrila y ponela en pantalla completa.</p>
+  </div>
+
+  <script>
+    var tabs = document.querySelectorAll('.tab');
+    var panels = document.querySelectorAll('.panel');
+    function show(name){
+      tabs.forEach(function(t){ t.classList.toggle('active', t.dataset.tab === name); });
+      panels.forEach(function(p){ p.hidden = (p.dataset.panel !== name); });
+    }
+    tabs.forEach(function(t){ t.addEventListener('click', function(){ show(t.dataset.tab); }); });
+    // arranca en la pestaña del dispositivo
+    var ua = navigator.userAgent || '';
+    show(/iPhone|iPad|iPod/i.test(ua) ? 'iphone' : 'android');
+  </script>
 </body>
 </html>
